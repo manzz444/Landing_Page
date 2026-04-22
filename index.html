@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asril Ilham | Solo Leveling Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+    
+    <div class="app">
+        <!-- Sidebar Kiri - Consistency Tracker -->
+        <aside class="sidebar-left">
+            <div class="tracker-card">
+                <h3><i class="fas fa-chart-line"></i> Consistency Tracker</h3>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-label">Consistency</span>
+                        <div class="stat-bar">
+                            <div class="stat-fill" id="consistencyFill"></div>
+                        </div>
+                        <span class="stat-value" id="consistencyValue">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Habit Growth</span>
+                        <div class="stat-bar">
+                            <div class="stat-fill growth" id="growthFill"></div>
+                        </div>
+                        <span class="stat-value" id="growthValue">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Progress</span>
+                        <div class="stat-bar">
+                            <div class="stat-fill progress" id="progressFill"></div>
+                        </div>
+                        <span class="stat-value" id="progressValue">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="skill-network">
+                <h3><i class="fas fa-share-alt"></i> Skill Network</h3>
+                <div class="skill-tags" id="skillTags">
+                    <!-- Dynamic from database -->
+                </div>
+                <div class="skill-edit">
+                    <input type="text" id="newSkillName" placeholder="Skill baru">
+                    <select id="newskillLevel" aria-label="Pilih level skill">
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                    </select>
+                    <button onclick="addSkill()">+ Tambah</button>
+                </div>
+            </div>
+
+            <div class="project-chart">
+                <h3><i class="fas fa-chart-pie"></i> Project Stats</h3>
+                <canvas id="projectPieChart" width="200" height="200"></canvas>
+                <div class="chart-legend" id="projectLegend"></div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <nav class="navbar">
+                <div class="nav-links">
+                    <button class="nav-btn active" data-page="about">About Me</button>
+                    <button class="nav-btn" data-page="project">Project</button>
+                    <button class="nav-btn" data-page="journey">Journey</button>
+                    <button class="nav-btn" data-page="contact">Contact</button>
+                </div>
+                <div class="datetime">
+                    <div class="live-time" id="liveTime">--:--:--</div>
+                    <div class="live-date" id="liveDate">---, -- ----- 2026</div>
+                </div>
+            </nav>
+
+            <div class="page-container">
+                <!-- About Me Page -->
+                <div id="about-page" class="page active">
+                    <div class="profile-header">
+                        <div class="avatar">
+                            <img src="coba.jpeg" alt="Asril Ilham N.F">
+                        </div>
+                        <h1>Asril Ilham Nur Firmansyah</h1>
+                        <p class="niche">Student | Software Engineering | Programming</p>
+                        <p class="motto">"Memberikan hal kecil dengan dampak yang besar & bermanfaat."</p>
+                    </div>
+                    <div class="about-details">
+                        <div class="info-card">
+                            <i class="fas fa-graduation-cap"></i>
+                            <h4>Pendidikan</h4>
+                            <p>SMK Telkom Malang</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h4>Tahun Lahir</h4>
+                            <p>21 Februari 2010</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h4>Kota Asal</h4>
+                            <p>Indonesia, Jawa Timur, Blitar</p>
+                        </div>
+                        <div class="info-card">
+                            <i class="fas fa-language"></i>
+                            <h4>Bahasa</h4>
+                            <p>Indonesia (Native), Javanese (Native), English (B1)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Di dalam project-page, tambahkan tombol tambah project -->
+<div id="project-page" class="page">
+    <h2><i class="fas fa-folder-open"></i> My Projects</h2>
+    
+    <!-- TOMBOL TAMBAH PROJECT (hanya muncul jika admin login) -->
+    <button id="btnTambahProject" class="btn-add-project">
+        <i class="fas fa-plus-circle"></i> Tambah Project Baru
+    </button>
+    
+    <div class="project-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="Project mandiri">Project Mandiri</button>
+        <button class="filter-btn" data-filter="Latihan">Latihan</button>
+        <button class="filter-btn" data-filter="Belajar mandiri">Belajar Mandiri</button>
+        <button class="filter-btn" data-filter="Salinan tugas sekolah">Tugas Sekolah</button>
+    </div>
+    <div class="projects-grid" id="projectsGrid">
+        <!-- Dynamic from database -->
+    </div>
+</div>
+
+<!-- MODAL FORM TAMBAH PROJECT -->
+<div id="projectModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeProjectModal()">&times;</span>
+        <h3><i class="fas fa-code"></i> Tambah Project Baru</h3>
+        <form id="tambahProjectForm">
+            <input type="text" id="projectTitle" placeholder="Nama Project *" required>
+            
+            <select id="projectCategory" title="Pilih Kategori Project" required>
+                <option value="">Pilih Kategori *</option>
+                <option value="Project mandiri">🚀 Project Mandiri (+20 Consistency)</option>
+                <option value="Belajar mandiri">📚 Belajar Mandiri (+15 Consistency)</option>
+                <option value="Latihan">💪 Latihan (+10 Consistency)</option>
+                <option value="Salinan tugas sekolah">📝 Tugas Sekolah (+5 Consistency)</option>
+            </select>
+
+            <textarea id="projectDesc" rows="3" placeholder="Deskripsi Project *" required></textarea>
+            <input type="text" id="projectTech" placeholder="Tech Stack (pisah dengan koma, contoh: HTML, CSS, JS, PHP)">
+            <input type="url" id="projectLink" placeholder="Link URL (opsional)">
+            <input type="password" id="adminPassword" placeholder="Password Admin *" required>
+
+            <div id="qualityPreview"></div>
+            <button type="submit">✨ Tambah Project</button>
+        </form>
+        <div id="projectMsg" class="status-msg"></div>
+    </div>
+</div>
+
+                <!-- Journey Page -->
+                <div id="journey-page" class="page">
+                    <h2><i class="fas fa-road"></i> My Journey</h2>
+                    
+                    <!-- Tombol tambah journey -->
+                    <button id="btnTambahJourney" class="btn-add-journey">
+                        <i class="fas fa-plus"></i> Tambah Perjalanan
+                    </button>
+                    
+                    <!-- Timeline akan diisi JS -->
+                    <div class="timeline-horizontal" id="timeline">
+                        <p>Memuat data...</p>
+                    </div>
+                </div>
+
+                <!-- Modal Form untuk tambah/edit journey -->
+                <div id="journeyModal" class="modal">
+                    <div class="modal-content">
+                        <span class="modal-close">&times;</span>
+                        <h3 id="modalTitle">Tambah Perjalanan</h3>
+                        <input type="hidden" id="editId" value="">
+                        <input type="number" id="journeyYear" placeholder="Tahun (contoh: 2024)" required>
+                        <input type="text" id="journeyTitle" placeholder="Judul" required>
+                        <textarea id="journeyDesc" rows="3" placeholder="Deskripsi..." required></textarea>
+                        <button id="btnSaveJourney">Simpan</button>
+                    </div>
+                </div>
+
+                <!-- Password Modal -->
+                <div id="passwordModal" class="modal">
+                    <div class="modal-content">
+                        <span class="modal-close" onclick="closePasswordModal()">&times;</span>
+                        <h3><i class="fas fa-lock"></i> Verifikasi Password</h3>
+                        <p>Anda perlu memasukkan password untuk mengedit journey.</p>
+                        <input type="password" id="passwordInput" placeholder="Masukkan password">
+                        <div id="passwordError"></div>
+                        <button onclick="verifyPassword()">Verifikasi</button>
+                    </div>
+                </div>
+
+                <!-- Contact Page -->
+                <div id="contact-page" class="page">
+                    <h2><i class="fas fa-envelope"></i> Contact & Saran</h2>
+                    <div class="contact-wrapper">
+                        <div class="social-links">
+                            <h3>Social Media</h3>
+                            <div class="social-grid">
+                                <a href="https://www.tiktok.com/@firmazz21" target="_blank" rel="noopener" class="social-btn tiktok"><i class="fab fa-tiktok"></i> TikTok</a>
+                                <a href="https://www.instagram.com/asrlfrmn_" target="_blank" rel="noopener" class="social-btn ig"><i class="fab fa-instagram"></i> Instagram</a>
+                                <a href="https://twitter.com/Rill_2195" target="_blank" rel="noopener" class="social-btn x"><i class="fab fa-twitter"></i> X</a>
+                                <a href="https://t.me/firmanzz21" target="_blank" rel="noopener" class="social-btn telegram"><i class="fab fa-telegram"></i> Telegram</a>
+                                <a href="https://www.linkedin.com/in/asril-firmansyah-6069333a5" target="_blank" rel="noopener" class="social-btn linkedin"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                                <a href="https://wa.me/6282230411060" target="_blank" rel="noopener" class="social-btn wa"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                            </div>
+                        </div>
+                        <div class="saran-form">
+                            <h3>Kirim Saran untuk Update Web</h3>
+                            <form id="saranForm">
+                                <input type="text" id="nama" placeholder="Nama lengkap" required>
+                                <input type="email" id="email" placeholder="Email" required>
+                                <textarea id="pesan" rows="4" placeholder="Pesan/saran untuk pengembangan web..." required></textarea>
+                                <button type="submit">Kirim Saran</button>
+                            </form>
+                            <div id="statusMsg" class="status-msg"></div>
+                        </div>
+                    </div>
+                    <div class="saran-list">
+                        <h3><i class="fas fa-comments"></i> Saran dari Pengunjung</h3>
+                        <div id="saranList" class="saran-items">
+                            <p>Memuat...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Sidebar Kanan - Habit Growth & Calendar -->
+        <aside class="sidebar-right">
+            <div class="habit-growth">
+                <h3><i class="fas fa-chart-simple"></i> Habit Growth</h3>
+                <div class="growth-stats">
+                    <div class="growth-circle">
+                        <svg viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#1a1a2e" stroke-width="8"/>
+                            <circle id="growthCircle" cx="50" cy="50" r="45" fill="none" stroke="#f9b17a" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="283"/>
+                        </svg>
+                        <div class="growth-percent" id="growthPercent">0%</div>
+                    </div>
+                    <p>Project berkualitas meningkatkan Growth</p>
+                </div>
+            </div>
+
+            <div class="calendar-widget">
+                <h3><i class="fas fa-calendar-alt"></i> Calendar</h3>
+                <div id="calendar"></div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

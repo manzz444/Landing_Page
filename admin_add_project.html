@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Tambah Project</title>
+    <style>
+        body { background: #0a0a0f; color: white; font-family: monospace; padding: 20px; }
+        input, textarea, select { width: 100%; padding: 10px; margin: 10px 0; background: #1a1a2e; border: 1px solid #f9b17a; color: white; }
+        button { background: #f9b17a; color: #0a0a0f; padding: 10px 20px; border: none; cursor: pointer; }
+        .container { max-width: 600px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tambah Project Baru</h1>
+        <form id="projectForm">
+            <input type="text" id="title" placeholder="Judul Project" required>
+            <select name="category" id="category" title="Pilih Kategori Project">
+                <option value="Project mandiri">Project Mandiri (+20 Consistency)</option>
+                <option value="Belajar mandiri">Belajar Mandiri (+15 Consistency)</option>
+                <option value="Latihan">Latihan (+10 Consistency)</option>
+                <option value="Salinan tugas sekolah">Tugas Sekolah (+5 Consistency)</option>
+            </select>
+            <textarea id="description" placeholder="Deskripsi" rows="3" required></textarea>
+            <input type="text" id="tech_stack" placeholder="Tech Stack (pisahkan dengan koma, contoh: PHP, MySQL, JavaScript)">
+            <input type="text" id="link_url" placeholder="Link URL (opsional)">
+            <input type="password" id="password" placeholder="Password Admin" required>
+            <button type="submit">Tambah Project</button>
+        </form>
+        <div id="result"></div>
+        <p>
+            💡 Quality Score berdasarkan tech stack:<br>
+            - HTML/CSS: +5<br>
+            - JavaScript: +20<br>
+            - PHP/MySQL: +15<br>
+            - Laravel/React: +25<br>
+            - 3+ teknologi: +10 bonus
+        </p>
+    </div>
+    <script>
+        document.getElementById('projectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            
+            // Verifikasi password dulu
+            const verifyRes = await fetch('verify_password.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `password=${encodeURIComponent(password)}`
+            });
+            const verifyData = await verifyRes.json();
+            
+            if (!verifyData.success) {
+                document.getElementById('result').innerHTML = '<p style="color:red">Password salah!</p>';
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('category', document.getElementById('category').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('tech_stack', document.getElementById('tech_stack').value);
+            formData.append('link_url', document.getElementById('link_url').value);
+            
+            const res = await fetch('tambah_project.php', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            
+            if (data.status === 'success') {
+                document.getElementById('result').innerHTML = `<p style="color:green">✅ ${data.message}</p>`;
+                document.getElementById('projectForm').reset();
+            } else {
+                document.getElementById('result').innerHTML = `<p style="color:red">❌ ${data.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
